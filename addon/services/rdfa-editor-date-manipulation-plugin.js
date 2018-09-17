@@ -1,8 +1,7 @@
-import { next } from '@ember/runloop';
 import { getOwner } from '@ember/application';
 import Service from '@ember/service';
-import EmberObject, { computed } from '@ember/object';
 import { task } from 'ember-concurrency';
+import moment from 'moment';
 
 /**
  * Service responsible for correct annotation of dates
@@ -13,11 +12,6 @@ import { task } from 'ember-concurrency';
  * @extends EmberService
  */
 const RdfaEditorDateManipulationPlugin = Service.extend({
-
-  init(){
-    this._super(...arguments);
-    const config = getOwner(this).resolveRegistration('config:environment');
-  },
 
   /**
    * Restartable task to handle the incoming events from the editor dispatcher
@@ -33,15 +27,10 @@ const RdfaEditorDateManipulationPlugin = Service.extend({
    */
   execute: task(function * (hrId, contexts, hintsRegistry, editor) {
     contexts
-      .filter( ({context}) => {
-        return context.find( ({object}) => object == "http://data.vlaanderen.be/ns/persoon#Geboorte" );
-      })
+      .filter(this.detectRelevantContext)
       .forEach( (ctx) => {
-        let region = ctx.region;
-        hintsRegistry.removeHintsInRegion(region, hrId, this.get('who')); // I think we don't need this
-        editor.replaceTextWithHTML(...region, "<strong>here be date</strong>");
+        editor.replaceRichNodeWithHTML(ctx.richNode.parent.parent , this.createCurrentDateHtml(ctx));
       } );
-    return null;
   }).restartable(),
 
   /**
@@ -56,71 +45,18 @@ const RdfaEditorDateManipulationPlugin = Service.extend({
    * @private
    */
   detectRelevantContext(context){
-    return context.text.toLowerCase().indexOf('hello') >= 0;
+    //Seek for:  <span class="annotation" property="besluit:geplandeStart" datatype="xsd:date" content=""><span typeOf="ext:currentDate">&nbsp;</span></span>
+    if(!context.context.find( ({ predicate, object }) => predicate === 'a' && object === 'http://mu.semte.ch/vocabularies/ext/currentDate'))
+      return false;
+    return true;
   },
 
-  /**
-   * Maps location of substring back within reference location
-   *
-   * @method normalizeLocation
-   *
-   * @param {[int,int]} [start, end] Location withing string
-   * @param {[int,int]} [start, end] reference location
-   *
-   * @return {[int,int]} [start, end] absolute location
-   *
-   * @private
-   */
-  normalizeLocation(location, reference){
-    return [location[0] + reference[0], location[1] + reference[0]];
-  },
-
-  /**
-   * Generates a card given a hint
-   *
-   * @method generateCard
-   *
-   * @param {string} hrId Unique identifier of the event in the hintsRegistry
-   * @param {Object} hintsRegistry Registry of hints in the editor
-   * @param {Object} editor The RDFa editor instance
-   * @param {Object} hint containing the hinted string and the location of this string
-   *
-   * @return {Object} The card to hint for a given template
-   *
-   * @private
-   */
-  generateCard(hrId, hintsRegistry, editor, hint){
-    return EmberObject.create({
-      info: {
-        label: this.get('who'),
-        plainValue: hint.text,
-        htmlString: '<b>hello world</b>',
-        location: hint.location,
-        hrId, hintsRegistry, editor
-      },
-      location: hint.location,
-      card: this.get('who')
-    });
-  },
-
-  /**
-   * Generates a hint, given a context
-   *
-   * @method generateHintsForContext
-   *
-   * @param {Object} context Text snippet at a specific location with an RDFa context
-   *
-   * @return {Object} [{dateString, location}]
-   *
-   * @private
-   */
-  generateHintsForContext(context){
-    const hints = [];
-    const index = context.text.toLowerCase().indexOf('hello');
-    const text = context.text.slice(index, index+5);
-    const location = this.normalizeLocation([index, index + 5], context.region);
-    hints.push({text, location});
-    return hints;
+  createCurrentDateHtml(context){
+    let nodeToReplace = context.richNode.parent.parent;
+    let newDomNode = nodeToReplace.domNode.cloneNode(true);
+    newDomNode.textContent = moment().format('LL');
+    newDomNode.setAttribute('content', moment().format('YYYY-MM-DD'));
+    return newDomNode.outerHTML;
   }
 });
 
