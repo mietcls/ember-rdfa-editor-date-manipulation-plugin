@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-  name: 'ember-rdfa-editor-date-manipulation-plugin'
+  name: '@lblod/ember-rdfa-editor-date-manipulation-plugin',
+  isDevelopingAddon(){ return true; }
 };

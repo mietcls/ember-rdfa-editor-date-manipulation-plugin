@@ -37,6 +37,6 @@ module.exports = {
     } else {
       throw 'Could not insert into "all" profile';
     }
-    return;
+    return this.addAddonToProject('ember-cli-moment-shim', '^3.7.1');
   }
 };
