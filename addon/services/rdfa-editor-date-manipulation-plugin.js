@@ -1,4 +1,3 @@
-import { getOwner } from '@ember/application';
 import Service from '@ember/service';
 import { task } from 'ember-concurrency';
 import moment from 'moment';
