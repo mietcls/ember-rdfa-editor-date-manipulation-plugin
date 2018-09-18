@@ -29,7 +29,7 @@ const RdfaEditorDateManipulationPlugin = Service.extend({
     contexts
       .filter(this.detectRelevantContext)
       .forEach( (ctx) => {
-        editor.replaceRichNodeWithHTML(ctx.richNode.parent.parent , this.createCurrentDateHtml(ctx));
+        editor.replaceNodeWithHTML(ctx.richNode.parent.parent.domNode , this.createCurrentDateHtml(ctx));
       } );
   }).restartable(),
 
