@@ -1,13 +1,16 @@
 {
   "name": "@lblod/ember-rdfa-editor-date-manipulation-plugin",
   "version": "0.1.1",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Plugin responsible for automatically manipulating a date according to an RDFa instructive.",
   "keywords": [
     "ember-addon"
   ],
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblod/ember-rdfa-editor-date-manipulation-plugin.git"
+  },
   "license": "MIT",
-  "author": "",
+  "author": "redpencil.io",
   "directories": {
     "doc": "doc",
     "test": "tests"
