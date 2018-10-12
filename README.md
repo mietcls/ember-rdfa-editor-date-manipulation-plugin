@@ -31,15 +31,15 @@ and will result, once triggered by the eventProcessor, in:
 The text value of the span is moment.js long format date, localized.
 The config of moment.js should be provided by the parent app, in the config/environment.js:
 
-`
+```
 let ENV = {
     moment: {
       includeLocales: ['nl'],
   }
 }
-`
+```
 
-
+If used in `datatype="xsd:dateTime"`, current datetime  will be set.
 
 Contributing
 ------------------------------------------------------------------------------
