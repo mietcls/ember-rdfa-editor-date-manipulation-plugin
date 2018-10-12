@@ -28,7 +28,7 @@ const RdfaEditorDateManipulationPlugin = Service.extend({
     contexts
       .filter(this.detectRelevantContext)
       .forEach( (ctx) => {
-        editor.replaceNodeWithHTML(ctx.richNode.parent.parent.domNode , this.createCurrentDateHtml(ctx));
+        editor.replaceNodeWithHTML(ctx.richNode.parent.parent.domNode , this.setCurrentDateHtml(ctx));
       } );
   }).restartable(),
 
@@ -45,18 +45,41 @@ const RdfaEditorDateManipulationPlugin = Service.extend({
    */
   detectRelevantContext(context){
     //Seek for:  <span class="annotation" property="besluit:geplandeStart" datatype="xsd:date" content=""><span typeOf="ext:currentDate">&nbsp;</span></span>
-    if(!context.context.find( ({ predicate, object }) => predicate === 'a' && object === 'http://mu.semte.ch/vocabularies/ext/currentDate'))
-      return false;
-    return true;
+    if(context.context.find( ({ predicate, object }) => predicate === 'a' && object === 'http://mu.semte.ch/vocabularies/ext/currentDate'))
+      return true;
+    return false;
   },
 
-  createCurrentDateHtml(context){
-    let nodeToReplace = context.richNode.parent.parent;
-    let newDomNode = nodeToReplace.domNode.cloneNode(true);
+  belongsToDateTime(context){
+    return context.context.slice(-2)[0].datatype == 'http://www.w3.org/2001/XMLSchema#dateTime';
+  },
+
+  setCurrentDateHtml(context){
+    let nodeToReplace = context.richNode.parent.parent.domNode;
+    if(this.belongsToDateTime(context)){
+      return this.createCurrentDateTimeHtml(nodeToReplace);
+    }
+    return this.createDateHtml(nodeToReplace);
+  },
+
+  createDateHtml(nodeToReplace){
+    let newDomNode = nodeToReplace.cloneNode(true);
     newDomNode.textContent = moment().format('LL');
     newDomNode.setAttribute('content', moment().format('YYYY-MM-DD'));
     return newDomNode.outerHTML;
+  },
+
+  createCurrentDateTimeHtml(nodeToReplace){
+    let current = moment();
+    let content = current.toISOString();
+    let value = `${current.format('LL')} ${current.hour()}:${current.minutes()}`;
+
+    let newDomNode = nodeToReplace.cloneNode(true);
+    newDomNode.textContent = value;
+    newDomNode.setAttribute('content', content);
+    return newDomNode.outerHTML;
   }
+
 });
 
 RdfaEditorDateManipulationPlugin.reopen({
