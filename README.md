@@ -7,7 +7,7 @@ Installation
 ------------------------------------------------------------------------------
 
 ```
-ember install ember-rdfa-editor-date-manipulation-plugin
+ember install @lblod/ember-rdfa-editor-date-manipulation-plugin
 ```
 
 
