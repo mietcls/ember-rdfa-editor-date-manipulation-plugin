@@ -28,7 +28,14 @@ const RdfaEditorDateManipulationPlugin = Service.extend({
     contexts
       .filter(this.detectRelevantContext)
       .forEach( (ctx) => {
-        editor.replaceNodeWithHTML(ctx.richNode.parent.parent.domNode , this.setCurrentDateHtml(ctx));
+        if( ! ctx.richNode || ! ctx.richNode.parent ) {
+          // TODO: the context does not exist anymore.  Do we need to
+          // recalculate the context again and see if the new nodes
+          // can be used for updating the contents?
+          console.warn( "Context does not have right parents for setting the date" );
+        } else {
+          editor.replaceNodeWithHTML(ctx.richNode.parent.parent.domNode , this.setCurrentDateHtml(ctx));
+        }
       } );
   }).restartable(),
 
