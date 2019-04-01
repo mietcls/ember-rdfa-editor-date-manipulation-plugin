@@ -1,6 +1,6 @@
 {
   "name": "@lblod/ember-rdfa-editor-date-manipulation-plugin",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Plugin responsible for automatically manipulating a date according to an RDFa instructive.",
   "keywords": [
     "ember-addon"
