@@ -30,7 +30,6 @@ import moment from 'moment';
  *    (Probably we will encounter these case not only in 'auto' plugins)
  *
  *      TODO: some check if node exists and fallback behaviour (i.e rescan or something) when current plugin is about to replace an unattached node.
- *  - TODO:  restarable tasks do not seem to be the safest option
  * ---------------------------------------------------
  * END CODE REVIEW NOTES
  * ---------------------------------------------------
