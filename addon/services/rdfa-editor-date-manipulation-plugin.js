@@ -58,13 +58,13 @@ const RdfaEditorDateManipulationPlugin = Service.extend({
     contexts
       .filter(this.detectRelevantContext)
       .forEach( (ctx) => {
-        if( ! ctx.richNode || ! ctx.richNode.parent ) {
+        if(ctx.richNode.length == 0 || ! ctx.richNode || ! ctx.richNode[0].parent ) {
           // TODO: the context does not exist anymore.  Do we need to
           // recalculate the context again and see if the new nodes
           // can be used for updating the contents?
           console.warn( "Context does not have right parents for setting the date" );
         } else {
-          editor.replaceNodeWithHTML(ctx.richNode.parent.parent.domNode , this.setCurrentDateHtml(ctx));
+          editor.replaceNodeWithHTML(ctx.richNode[0].parent.parent.domNode , this.setCurrentDateHtml(ctx));
         }
       } );
   }).restartable(),
@@ -92,7 +92,7 @@ const RdfaEditorDateManipulationPlugin = Service.extend({
   },
 
   setCurrentDateHtml(context){
-    let nodeToReplace = context.richNode.parent.parent.domNode;
+    let nodeToReplace = context.richNode[0].parent.parent.domNode;
     if(this.belongsToDateTime(context)){
       return this.createCurrentDateTimeHtml(nodeToReplace);
     }
