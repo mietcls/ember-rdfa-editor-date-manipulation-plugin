@@ -17,13 +17,13 @@ An instructive is an RDFA snippet you insert in your template.
 
 Currently the following snippet should be inserted:
 ```
-<span class="annotation" property="a:specificProperty" datatype="xsd:date" content="">
+<span property="a:specificProperty" datatype="xsd:date" content="">
   <span typeOf="ext:currentDate">&nbsp;</span>
 </span>
 ```
 and will result, once triggered by the eventProcessor, in:
 ```
-<span class="annotation" property="a:specificProperty" datatype="xsd:date" content="2018-09-17">
+<span property="a:specificProperty" datatype="xsd:date" content="2018-09-17">
   17 september 2018
 </span>
 ```
